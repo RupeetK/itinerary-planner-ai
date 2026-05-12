@@ -55,7 +55,7 @@ User natural-language query
                         ▼
 ┌─────────────────────────────────────────────────────────┐
 │  STAGE 2 — ABSA  (ABSA.py)                              │
-│  DeBERTa-v3-base-absa-v1.1 (HuggingFace, MPS)          │
+│  DeBERTa-v3-base-absa-v1.1 (HuggingFace, MPS)           │
 │  Runs aspect-level sentiment on every candidate POI's   │
 │  Google reviews; aspects: crowd, value, family,         │
 │  exhibits, staff, location, solo, couple, friends,      │
@@ -65,7 +65,7 @@ User natural-language query
                         │ absa_results (scored POI list)
                         ▼
 ┌─────────────────────────────────────────────────────────┐
-│  STAGE 3 — RAG  (RAG.py)                               │
+│  STAGE 3 — RAG  (RAG.py)                                │
 │  SentenceTransformer + FAISS                            │
 │  Retrieves semantically similar past itineraries from   │
 │  itineraries_history.json; surfaces them in UI as       │
@@ -108,7 +108,7 @@ User natural-language query
 ┌─────────────────────────────────────────────────────────┐
 │  STAGE 7 — Conversational Agent  (Agent.py)             │
 │  ConversationAgent (deque windowed history, 4 turns)    │
-│  LLM router → classifies intent → dispatches handler   │
+│  LLM router → classifies intent → dispatches handler    │
 │                                                         │
 │  Handlers:                                              │
 │  • generate_itinerary   — triggers Stages 1-6           │
@@ -364,14 +364,14 @@ agent.reset(keep_memory=False)  # full new session
 - Polyline route connecting stops in sequence
 - Rich popup HTML: name, type, rating, address, review snippets, visit time
 - Photo thumbnails via Google Places API (graceful `onerror` fallback)
-- Saves to `map.html` → served via Gradio file endpoint
+- Saves to `itinerary_map.html` → served via Gradio file endpoint
 
 **`plot_timeline(final_itinerary)`**
 - Plotly horizontal bar chart (Gantt) — one row per day
 - Bars colour-coded by `primaryType`
 - Hover tooltip: POI name, times, rating, combined score
 - Travel gaps shown as light-grey bars
-- Saves to `timeline.html`
+- Saves to `itinerary_timeline.html`
 
 ---
 
@@ -383,9 +383,9 @@ agent.reset(keep_memory=False)  # full new session
 |---|---|
 | Chatbot panel | 🗺️ Map (Folium iframe) |
 | Text input + Send/Reset | 📅 Timeline (Plotly iframe) |
-| Quick-action chips | ⭐ POI Insights (ABSA cards) |
+| Quick-action chips | ⭐ Place Insights (ABSA cards) |
 | Example query accordion | 📊 Trip Stats & Metrics |
-| | 📋 Full Itinerary cards |
+| | 📋 Full Itinerary cards & Suggestions|
 
 **Rendering rule:** Map, timeline, ABSA, stats, and itinerary panels update **only** when `generate_itinerary` fires. Follow-up Q&A turns update only the chatbot.
 
@@ -420,10 +420,12 @@ Both return a structured `empty_result` dict so the agent can surface a graceful
 
 **Metrics computed:**
 - `constraint_satisfaction_rate` — % of hard constraints met
-- `travel_efficiency_score` — total travel time vs total visit time ratio
-- `day_balance_score` — standard deviation of POI counts across days
-- `satisfaction_score` — weighted ABSA scores of scheduled POIs
-- `schedule_violation_rate` — % of stops with opening-hour conflicts
+- `cross_zone_rate` — zone change rate
+- `day_balance_std` — standard deviation of POI counts across days
+- `backtracking_score` — travel time optimization rate
+- `total_travel_min` — total travel time
+- `preference_metrics` - % of preferences met/avoided
+- `invalid_day_assignment_rate` - % of POIs assigned on a closed day
 
 ---
 
@@ -476,8 +478,8 @@ nightlife           ·  recreation_active
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/TripEase.git
-cd TripEase
+git clone https://github.com/<your-username>/sentiment-aware-AI-agent.git
+cd sentiment-aware-AI-agent
 ```
 
 ### 2. Create a virtual environment
@@ -534,7 +536,7 @@ pip install mlx mlx-lm transformers accelerate torch \
 ### 4. Hugging Face authentication
 The Llama model is gated. Create a file `llama_.py` (already gitignored) in the project root:
 ```python
-hf_key = _YOUR_HF_TOKEN_HERE"
+hf_key = YOUR_HF_TOKEN_HERE
 ```
 Then request access at: https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct
 
@@ -664,8 +666,8 @@ You:   "Can I add one more stop without going over 12 hours?"
 | `final_itinerary.json` | 6 | Full scheduled itinerary with clock times |
 | `session_memory.json` | 7 | Agent's structured session state |
 | `itineraries_history.json` | 6→3 | Cumulative trip log (RAG corpus) |
-| `map.html` | 7 | Interactive Folium map |
-| `timeline.html` | 7 | Plotly Gantt timeline |
+| `itinerary_map.html` | 7 | Interactive Folium map |
+| `itinerary_timeline.html` | 7 | Plotly Gantt timeline |
 
 ---
 
