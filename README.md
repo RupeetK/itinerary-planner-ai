@@ -1,4 +1,4 @@
-# 🗽 TripEase — Sentiment-Aware AI Agent for Intelligent Travel Itinerary Planning
+# 🗽 TripEase - Sentiment-Aware AI Agent for Intelligent Travel Itinerary Planning
 
 
 
