@@ -125,8 +125,8 @@ User natural-language query
 │  Left:  chat panel + example chips                      │
 │  Right: tabbed panel —                                  │
 │    🗺️  Map (Folium HTML),  📅 Timeline (Plotly),         │
-│    ⭐  POI Insights (ABSA cards), 📊 Trip Stats,         │
-│    📋  Full Itinerary cards                             │
+│    ⭐  Place Insights (ABSA cards), 📊 Trip Stats,       │
+│    📋  Full Itinerary cards  & Suggestions               │
 │  Visualisations rendered ONCE on itinerary generation;  │
 │  follow-up chat turns do NOT re-render them             │
 └─────────────────────────────────────────────────────────┘
