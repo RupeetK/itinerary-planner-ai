@@ -17,7 +17,7 @@ TripEase is an end-to-end AI travel agent that takes a plain-English trip query 
 7. [Running the Project](#running-the-project)
 8. [Usage Guide](#usage-guide)
 9. [Output Files](#output-files)
-10. [Project Structure](#project-structure)
+10. [Repository Structure](#repository-structure)
 11. [Constraints & Design Decisions](#constraints--design-decisions)
 12. [Known Limitations](#known-limitations)
 
@@ -470,7 +470,6 @@ nightlife           ·  recreation_active
 ## Installation
 
 ### Prerequisites
-- macOS with Apple Silicon (M1/M2/M3)
 - Python 3.10 or 3.11
 - Jupyter Notebook or JupyterLab
 - Hugging Face account with access to `meta-llama/Llama-3.2-3B-Instruct`
@@ -535,14 +534,14 @@ pip install mlx mlx-lm transformers accelerate torch \
 ### 4. Hugging Face authentication
 The Llama model is gated. Create a file `llama_.py` (already gitignored) in the project root:
 ```python
-hf_key = "hf_YOUR_TOKEN_HERE"
+hf_key = _YOUR_HF_TOKEN_HERE"
 ```
 Then request access at: https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct
 
 ### 5. Google Places API key
 Create a file `config.py` in the project root:
 ```python
-API_KEY = "YOUR_GOOGLE_PLACES_API_KEY"
+API_KEY = YOUR_GOOGLE_API_TOKEN
 ```
 This key is used to build photo URLs in itinerary cards. The pipeline runs without it — photo thumbnails will simply be hidden.
 
@@ -551,7 +550,6 @@ Place the following files in the project root:
 ```
 nyc_pois_database.json
 nyc_pois_by_category.json
-itineraries_history.json    # starts as [] for a fresh project
 ```
 
 ---
@@ -674,36 +672,34 @@ You:   "Can I add one more stop without going over 12 hours?"
 ## Project Structure
 
 ```
-TripEase/
-│
-├── query_parser.py          # Stage 1 — NLP query parsing (Llama)
-├── ABSA.py                  # Stage 2 — Aspect-based sentiment analysis (DeBERTa)
-├── RAG.py                   # Stage 3 — Semantic retrieval (FAISS + SentenceTransformer)
-├── time_matrix.py           # Stage 4 — POI filtering + Haversine travel matrix
-├── assignment_sequence.py   # Stage 5 — CVRPTW solver (OR-Tools)
-├── TemporalScheduling.py    # Stage 6 — Clock-time scheduling
-├── Agent.py                 # Stage 7 — Conversational agent + all handlers
-├── visualize.py             # Folium map + Plotly timeline rendering
-├── pipeline.py              # Pipeline orchestrator + SessionMemory
-├── UI.py                    # Stage 8 — Gradio Blocks interface
-├── evaluation.py            # Itinerary quality metrics
-│
-├── nyc_pois_database.json   # Primary POI database (Google Places data)
-├── nyc_pois_by_category.json# POIs indexed by category
-├── itineraries_history.json # RAG corpus — grows with each run
-│
-├── config.py                # Google API key (gitignored)
-├── llama_.py                # Hugging Face token (gitignored)
-│
-├── parsed_query.json        # Stage 1 output (auto-generated)
-├── absa_output.json         # Stage 2 output (auto-generated)
-├── rag_output.json          # Stage 3 output (auto-generated)
-├── travel_data.json         # Stage 4 output (auto-generated)
-├── sequence_output.json     # Stage 5 output (auto-generated)
-├── final_itinerary.json     # Stage 6 output (auto-generated)
-├── session_memory.json      # Stage 7 session state (auto-generated)
-├── map.html                 # Folium map (auto-generated)
-└── timeline.html            # Plotly timeline (auto-generated)
+.
+├── src/
+│   ├── query_parser.py    # Stage 1 — NLP query parsing (Llama)
+│   ├── ABSA.py   # Stage 2 — Aspect-based sentiment analysis (DeBERTa)
+│   ├── RAG.py    # Stage 3 — Semantic retrieval (FAISS + SentenceTransformer)
+│   ├── time_matrix.py           # Stage 4 — POI filtering + Haversine travel matrix
+│   ├── assignment_sequence.py   # Stage 5 — CVRPTW solver (OR-Tools)
+│   ├── TemporalScheduling.py    # Stage 6 — Clock-time scheduling
+│   ├── Agent.py    # Stage 7 — Conversational agent + all handlers
+│   ├── visualize.py   # Folium map + Plotly timeline rendering
+│   ├── pipeline.py       # Pipeline orchestrator + SessionMemory
+│   ├── UI.py      # Stage 8 — Gradio Blocks interface
+│   ├── evaluation.py    # Itinerary quality metrics
+│   ├── config.py      # Google API key (gitignored)
+│   └── llama_.py     # Hugging Face token (gitignored)
+├──data/
+│   ├── nyc_pois_database.json   # Primary POI database (Google Places data)
+│   └── nyc_pois_by_category.json # POIs indexed by category
+├──results/
+│   ├── parsed_query.json  # Stage 1 output (auto-generated)
+│   ├── absa_output.json  # Stage 2 output (auto-generated)
+│   ├── rag_output.json   # Stage 3 output (auto-generated)
+│   ├── travel_data.json    # Stage 4 output (auto-generated)
+│   ├── sequence_output.json     # Stage 5 output (auto-generated)
+│   ├── final_itinerary.json     # Stage 6 output (auto-generated)
+│   ├── session_memory.json    # Stage 7 session state (auto-generated)
+│   ├── itinerary_map.png # Folium map (auto-generated)
+    └── itinerary_timeline.png   # Plotly timeline (auto-generated)
 ```
 
 ---
