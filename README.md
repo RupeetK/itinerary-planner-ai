@@ -478,8 +478,8 @@ nightlife           ·  recreation_active
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/sentiment-aware-AI-agent.git
-cd sentiment-aware-AI-agent
+git clone https://github.com/<your-username>/itinerary-planner-ai.git
+cd itinerary-planner-ai
 ```
 
 ### 2. Create a virtual environment
